@@ -16,7 +16,7 @@ example.com: PROTECTED
 
 It comes in two forms that share one rule set:
 
-- **A static web page** (`web/`) that anyone can use. The browser queries public DNS through Cloudflare's DNS-over-HTTPS, so there's no server to run.
+- **A static web page** (`web/`) that anyone can use, live at <https://xeroxzen.github.io/spoofscore/>. The browser queries public DNS through Cloudflare's DNS-over-HTTPS, so there's no server to run.
 - **A Python CLI and library** for scripts, batch checks and CI.
 
 ## Install

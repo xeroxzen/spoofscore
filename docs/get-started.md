@@ -4,7 +4,7 @@ This guide shows you three ways to check whether a domain can be spoofed: the we
 
 ## Use the web page
 
-1. Open the hosted page, or run it locally:
+1. Open <https://xeroxzen.github.io/spoofscore/>, or run the page locally:
 
    ```bash
    git clone https://github.com/xeroxzen/spoofscore.git
