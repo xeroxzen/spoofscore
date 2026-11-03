@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Email Spoofing Check</title>
+<meta name="description" content="Can someone send email pretending to be your company? Free check of your domain's SPF and DMARC records.">
+<style>
+  :root {
+    --bg: #f7f7f5; --surface: #ffffff; --text: #1b1d21; --muted: #5d6470; --line: #e2e3e0;
+    --accent: #1f5f8b; --bad: #b42318; --bad-bg: #fdeceb; --warn: #9a5b00; --warn-bg: #fff4e0;
+    --good: #1f7a4d; --good-bg: #e8f5ee; --code-bg: #f1f1ee;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #121417; --surface: #1a1d21; --text: #e8e9eb; --muted: #9aa1ab; --line: #2b2f35;
+      --accent: #7cb7e0; --bad: #ff8a80; --bad-bg: #3a1d1b; --warn: #f5c26b; --warn-bg: #3a2c14;
+      --good: #7fd1a5; --good-bg: #16302a; --code-bg: #23272c;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #121417; --surface: #1a1d21; --text: #e8e9eb; --muted: #9aa1ab; --line: #2b2f35;
+    --accent: #7cb7e0; --bad: #ff8a80; --bad-bg: #3a1d1b; --warn: #f5c26b; --warn-bg: #3a2c14;
+    --good: #7fd1a5; --good-bg: #16302a; --code-bg: #23272c;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  main { max-width: 720px; margin: 0 auto; padding: 48px 16px 64px; }
+  h1 { font-size: clamp(1.7rem, 4vw, 2.3rem); line-height: 1.2; margin: 0 0 12px; }
+  .lede { color: var(--muted); margin: 0 0 28px; font-size: 1.05rem; }
+  form { display: flex; gap: 8px; flex-wrap: wrap; }
+  input {
+    flex: 1 1 260px; min-width: 0; padding: 12px 14px; font: inherit; color: var(--text);
+    background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+  }
+  input:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  button {
+    padding: 12px 22px; font: inherit; font-weight: 600; color: #fff; background: var(--accent);
+    border: 0; border-radius: 8px; cursor: pointer;
+  }
+  :root[data-theme="dark"] button { color: #0d1114; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) button { color: #0d1114; } }
+  button:disabled { opacity: .6; cursor: progress; }
+  .result {
+    margin-top: 28px; padding: 24px; background: var(--surface);
+    border: 1px solid var(--line); border-left-width: 6px; border-radius: 10px;
+  }
+  .verdict-exposed { border-left-color: var(--bad); }
+  .verdict-partial { border-left-color: var(--warn); }
+  .verdict-protected { border-left-color: var(--good); }
+  .result-domain { margin: 0; color: var(--muted); font-size: .9rem; }
+  .result-headline { margin: 4px 0 4px; font-size: 1.6rem; }
+  .verdict-exposed .result-headline { color: var(--bad); }
+  .verdict-partial .result-headline { color: var(--warn); }
+  .verdict-protected .result-headline { color: var(--good); }
+  .result-explainer { margin: 0 0 18px; }
+  .record { display: grid; grid-template-columns: 64px 1fr; gap: 8px; margin: 6px 0; align-items: start; }
+  .record-label { font-weight: 600; color: var(--muted); font-size: .85rem; padding-top: 3px; }
+  code {
+    font: .85rem/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--code-bg);
+    padding: 3px 6px; border-radius: 4px; overflow-wrap: anywhere;
+  }
+  h3 { margin: 22px 0 10px; font-size: 1rem; }
+  .findings { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .finding { padding: 12px 14px; border-radius: 8px; background: var(--bg); border: 1px solid var(--line); }
+  .badge {
+    display: inline-block; font-size: .72rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .04em; padding: 2px 8px; border-radius: 99px;
+  }
+  .sev-critical .badge, .sev-high .badge { background: var(--bad-bg); color: var(--bad); }
+  .sev-medium .badge { background: var(--warn-bg); color: var(--warn); }
+  .sev-low .badge { background: var(--code-bg); color: var(--muted); }
+  .finding-title { margin: 6px 0 8px; }
+  .fix { display: grid; grid-template-columns: 40px 1fr; gap: 8px; align-items: start; }
+  .fix-label { font-size: .8rem; font-weight: 600; color: var(--muted); padding-top: 3px; }
+  .all-clear { color: var(--good); font-weight: 600; margin: 16px 0 0; }
+  .error { margin: 0; color: var(--bad); }
+  section.about { margin-top: 40px; color: var(--muted); font-size: .92rem; }
+  section.about h2 { font-size: 1rem; color: var(--text); margin: 24px 0 6px; }
+  footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--line); font-size: .9rem; color: var(--muted); }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Can someone send email pretending to be your company?</h1>
+  <p class="lede">Fake invoices, payment-instruction changes and "urgent request from the CEO" emails work best when they appear to come from your real domain. Check whether yours is protected in a few seconds.</p>
+
+  <form id="form" autocomplete="off">
+    <label for="domain" hidden>Domain or email address</label>
+    <input id="domain" name="domain" placeholder="yourcompany.co.zw" inputmode="url" required>
+    <button id="check" type="submit">Check</button>
+  </form>
+
+  <div id="result" class="result" hidden aria-live="polite"></div>
+
+  <section class="about">
+    <h2>What this checks</h2>
+    <p><strong>DMARC</strong> tells receiving mail servers what to do with email that claims to be from your domain but fails authentication. Without an enforcing DMARC policy (<code>p=reject</code> or <code>p=quarantine</code>), forged email is delivered.</p>
+    <p><strong>SPF</strong> lists the servers allowed to send your mail. A mistake here can quietly let anyone pass.</p>
+    <h2>What it doesn't check</h2>
+    <p>DKIM signing keys (they can't be listed without knowing your selector names), lookalike domains, or the security of your mailboxes.</p>
+    <h2>Privacy</h2>
+    <p>Your browser reads public DNS records through Cloudflare's DNS-over-HTTPS service. Nothing is sent to the domain being checked, and no results are stored by this page.</p>
+  </section>
+
+  <footer>
+    Built by Andile Mbele, software and security engineer in Zimbabwe. Need help getting to <code>p=reject</code> without breaking legitimate email? <a href="mailto:andilembele020@gmail.com?subject=Email%20spoofing%20check">Get in touch</a>.
+  </footer>
+</main>
+<script type="module" src="app.js"></script>
+</body>
+</html>

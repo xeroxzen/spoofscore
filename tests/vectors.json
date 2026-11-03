@@ -1,0 +1,163 @@
+[
+  {
+    "name": "dmarc missing v= prefix is ignored by receivers",
+    "spf": ["v=spf1 include:spf.protection.outlook.com -all"],
+    "dmarc": ["DMARC1; p=reject; rua=mailto:dmarc@example.com; pct=100; fo=1"],
+    "verdict": "exposed",
+    "codes": ["DMARC_MALFORMED"]
+  },
+  {
+    "name": "no dmarc record",
+    "spf": ["v=spf1 -all"],
+    "dmarc": [],
+    "verdict": "exposed",
+    "codes": ["DMARC_MISSING"]
+  },
+  {
+    "name": "unrelated txt at _dmarc",
+    "spf": ["v=spf1 -all"],
+    "dmarc": ["google-site-verification=abc"],
+    "verdict": "exposed",
+    "codes": ["DMARC_MISSING"]
+  },
+  {
+    "name": "two dmarc records break policy discovery",
+    "spf": ["v=spf1 -all"],
+    "dmarc": ["v=DMARC1; p=reject; rua=mailto:a@example.com", "v=DMARC1; p=none"],
+    "verdict": "exposed",
+    "codes": ["DMARC_MULTIPLE"]
+  },
+  {
+    "name": "monitor only",
+    "spf": ["v=spf1 mx include:spf.example.net -all"],
+    "dmarc": ["v=DMARC1; p=none; rua=mailto:a@example.com"],
+    "verdict": "exposed",
+    "codes": ["DMARC_MONITOR_ONLY"]
+  },
+  {
+    "name": "spf with no all mechanism and monitor-only dmarc",
+    "spf": ["v=spf1 include:spf.example.net ip4:192.0.2.1 "],
+    "dmarc": ["v=DMARC1; p=none; fo=1; rua=mailto:a@example.com; pct=100"],
+    "verdict": "exposed",
+    "codes": ["DMARC_MONITOR_ONLY", "SPF_NO_ALL"]
+  },
+  {
+    "name": "invalid policy value",
+    "spf": ["v=spf1 -all"],
+    "dmarc": ["v=DMARC1; p=block; rua=mailto:a@example.com"],
+    "verdict": "exposed",
+    "codes": ["DMARC_POLICY_INVALID"]
+  },
+  {
+    "name": "missing policy tag",
+    "spf": ["v=spf1 -all"],
+    "dmarc": ["v=DMARC1; rua=mailto:a@example.com"],
+    "verdict": "exposed",
+    "codes": ["DMARC_POLICY_INVALID"]
+  },
+  {
+    "name": "strict reject",
+    "spf": ["v=spf1 ip4:192.0.2.0/24 include:_spf.example.net -all"],
+    "dmarc": ["v=DMARC1; p=reject; rua=mailto:a@example.com; adkim=s; aspf=s; sp=reject"],
+    "verdict": "protected",
+    "codes": []
+  },
+  {
+    "name": "reject with whitespace and lowercase v",
+    "spf": ["V=SPF1 -ALL"],
+    "dmarc": ["v = DMARC1 ; p = Reject ; rua=mailto:a@example.com"],
+    "verdict": "protected",
+    "codes": []
+  },
+  {
+    "name": "redirect counts as a terminator",
+    "spf": ["v=spf1 redirect=_spf.example.net"],
+    "dmarc": ["v=DMARC1; p=reject; rua=mailto:a@example.com"],
+    "verdict": "protected",
+    "codes": []
+  },
+  {
+    "name": "quarantine is protected with a note",
+    "spf": ["v=spf1 -all"],
+    "dmarc": ["v=DMARC1; p=quarantine; rua=mailto:a@example.com"],
+    "verdict": "protected",
+    "codes": ["DMARC_QUARANTINE"]
+  },
+  {
+    "name": "partial pct",
+    "spf": ["v=spf1 -all"],
+    "dmarc": ["v=DMARC1; p=reject; pct=25; rua=mailto:a@example.com"],
+    "verdict": "partial",
+    "codes": ["DMARC_PARTIAL_PCT"]
+  },
+  {
+    "name": "subdomains left open",
+    "spf": ["v=spf1 -all"],
+    "dmarc": ["v=DMARC1; p=reject; sp=none; rua=mailto:a@example.com"],
+    "verdict": "partial",
+    "codes": ["DMARC_SUBDOMAIN_NONE"]
+  },
+  {
+    "name": "no aggregate reports",
+    "spf": ["v=spf1 -all"],
+    "dmarc": ["v=DMARC1; p=reject"],
+    "verdict": "protected",
+    "codes": ["DMARC_NO_REPORTS"]
+  },
+  {
+    "name": "plus all defeats dmarc",
+    "spf": ["v=spf1 +all"],
+    "dmarc": ["v=DMARC1; p=reject; rua=mailto:a@example.com"],
+    "verdict": "exposed",
+    "codes": ["SPF_PASS_ALL"]
+  },
+  {
+    "name": "bare all also passes everyone",
+    "spf": ["v=spf1 mx all"],
+    "dmarc": ["v=DMARC1; p=reject; rua=mailto:a@example.com"],
+    "verdict": "exposed",
+    "codes": ["SPF_PASS_ALL"]
+  },
+  {
+    "name": "neutral all",
+    "spf": ["v=spf1 mx ?all"],
+    "dmarc": ["v=DMARC1; p=reject; rua=mailto:a@example.com"],
+    "verdict": "protected",
+    "codes": ["SPF_NEUTRAL_ALL"]
+  },
+  {
+    "name": "softfail is acceptable",
+    "spf": ["v=spf1 mx ~all"],
+    "dmarc": ["v=DMARC1; p=reject; rua=mailto:a@example.com"],
+    "verdict": "protected",
+    "codes": []
+  },
+  {
+    "name": "two spf records",
+    "spf": ["v=spf1 -all", "v=spf1 mx -all"],
+    "dmarc": ["v=DMARC1; p=reject; rua=mailto:a@example.com"],
+    "verdict": "protected",
+    "codes": ["SPF_MULTIPLE"]
+  },
+  {
+    "name": "no spf record",
+    "spf": ["some-verification=xyz"],
+    "dmarc": ["v=DMARC1; p=reject; rua=mailto:a@example.com"],
+    "verdict": "protected",
+    "codes": ["SPF_MISSING"]
+  },
+  {
+    "name": "v=spf10 is not spf",
+    "spf": ["v=spf10 -all"],
+    "dmarc": ["v=DMARC1; p=reject; rua=mailto:a@example.com"],
+    "verdict": "protected",
+    "codes": ["SPF_MISSING"]
+  },
+  {
+    "name": "too many top-level lookups",
+    "spf": ["v=spf1 include:a.example include:b.example include:c.example include:d.example include:e.example include:f.example a mx exists:g.example include:h.example include:i.example -all"],
+    "dmarc": ["v=DMARC1; p=reject; rua=mailto:a@example.com"],
+    "verdict": "protected",
+    "codes": ["SPF_TOO_MANY_LOOKUPS"]
+  }
+]
