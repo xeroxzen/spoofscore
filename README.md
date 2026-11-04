@@ -31,19 +31,19 @@ Or run it once without installing: `uvx spoofscore example.com`. Requires Python
 
 ## Documentation
 
-- [Get started](docs/get-started.md): check a domain from the web page, the CLI or Python.
+- [Get started](https://github.com/xeroxzen/spoofscore/blob/main/docs/get-started.md): check a domain from the web page, the CLI or Python.
 - Concepts
-  - [How email spoofing is stopped](docs/concepts/how-spoofing-is-stopped.md): SPF, DMARC and alignment in one page.
+  - [How email spoofing is stopped](https://github.com/xeroxzen/spoofscore/blob/main/docs/concepts/how-spoofing-is-stopped.md): SPF, DMARC and alignment in one page.
 - How-to guides
-  - [Move a domain to `p=reject` safely](docs/how-to/move-to-p-reject.md)
-  - [Check many domains in CI](docs/how-to/check-domains-in-ci.md)
-  - [Host the web page](docs/how-to/host-the-web-page.md)
+  - [Move a domain to `p=reject` safely](https://github.com/xeroxzen/spoofscore/blob/main/docs/how-to/move-to-p-reject.md)
+  - [Check many domains in CI](https://github.com/xeroxzen/spoofscore/blob/main/docs/how-to/check-domains-in-ci.md)
+  - [Host the web page](https://github.com/xeroxzen/spoofscore/blob/main/docs/how-to/host-the-web-page.md)
 - Reference
-  - [Checks](docs/reference/checks.md): every finding, why it matters and how to fix it.
-  - [CLI](docs/reference/cli.md)
-  - [Python API](docs/reference/python-api.md)
-- [Troubleshooting](docs/troubleshooting.md)
-- [Changelog](CHANGELOG.md)
+  - [Checks](https://github.com/xeroxzen/spoofscore/blob/main/docs/reference/checks.md): every finding, why it matters and how to fix it.
+  - [CLI](https://github.com/xeroxzen/spoofscore/blob/main/docs/reference/cli.md)
+  - [Python API](https://github.com/xeroxzen/spoofscore/blob/main/docs/reference/python-api.md)
+- [Troubleshooting](https://github.com/xeroxzen/spoofscore/blob/main/docs/troubleshooting.md)
+- [Changelog](https://github.com/xeroxzen/spoofscore/blob/main/CHANGELOG.md)
 
 ## Verdicts
 
@@ -59,8 +59,8 @@ DKIM (selectors can't be listed from DNS), nested SPF `include:` lookups, lookal
 
 ## Contributing and security
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md).
+See [CONTRIBUTING.md](https://github.com/xeroxzen/spoofscore/blob/main/CONTRIBUTING.md) and [SECURITY.md](https://github.com/xeroxzen/spoofscore/blob/main/SECURITY.md).
 
 ## License
 
-[MIT](LICENSE)
+[MIT](https://github.com/xeroxzen/spoofscore/tree/main/LICENSE)
