@@ -63,4 +63,4 @@ See [CONTRIBUTING.md](https://github.com/xeroxzen/spoofscore/blob/main/CONTRIBUT
 
 ## License
 
-[MIT](https://github.com/xeroxzen/spoofscore/tree/main/LICENSE)
+[MIT](https://github.com/xeroxzen/spoofscore/blob/main/LICENSE)
