@@ -25,8 +25,6 @@ It comes in two forms that share one rule set:
 uv tool install spoofscore
 ```
 
-Until the first PyPI release, install from GitHub instead: `uv tool install git+https://github.com/xeroxzen/spoofscore`.
-
 Or run it once without installing: `uvx spoofscore example.com`. Requires Python 3.10 or later.
 
 ## Documentation
